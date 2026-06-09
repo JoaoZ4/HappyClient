@@ -73,10 +73,24 @@ def clientes():
     return render_template('clientes.html', clientes=clientes) # retorna renderizando a tela clientes.html 
                                                                # passando a lista de clientes resultante
 
-@app.route('/', methods=['GET']) # configuração da rota principal, método GET adicionado para a função de busca
+@app.route('/') # configuração da rota principal
 def index():
-    return render_template('dashboard.html') # retorna renderizando a tela clientes.html 
-                                                               # passando a lista de clientes resultante
+    hoje = datetime.date.today()
+    daqui_7_dias = hoje + datetime.timedelta(days=7)
+    niver_hoje = 0
+    niver_semana = 0
+    tot_clientes = Cliente.query.count()
+    clientes = Cliente.query.all()
+
+    for cliente in clientes:
+        niver_ano_atual = cliente.data_nascimento.replace(year = hoje.year)
+        if hoje < niver_ano_atual <= daqui_7_dias:
+            niver_semana += 1
+        if cliente.data_nascimento.month == hoje.month and cliente.data_nascimento.day == hoje.day:
+            niver_hoje += 1
+            
+    
+    return render_template('dashboard.html', tot_clientes=tot_clientes, niver_hoje=niver_hoje, niver_semana=niver_semana) # retorna renderizando a tela dashboard.html
 
 if __name__ == '__main__':
     app.run(debug=True) # inicia o servidor local
