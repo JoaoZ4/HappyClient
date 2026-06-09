@@ -34,7 +34,7 @@ def editar(id):
         nasc = request.form['data_nascimento']
         cliente.data_nascimento = datetime.datetime.strptime(nasc, '%Y-%m-%d').date()
         db.session.commit() # publica no banco de dados
-        return redirect('/') # e volta para a main
+        return redirect('/clientes') # e volta para a main
         
 
 @app.route('/clientes/excluir/<int:id>') # rota para excluir um registro
@@ -42,7 +42,7 @@ def excluir(id):
     cliente = Cliente.query.get(id) # coleta o objeto
     db.session.delete(cliente) # deleta
     db.session.commit() # publica
-    return redirect('/') # volta para a main
+    return redirect('/clientes') # volta para a main
 
 @app.route('/clientes/cadastrar', methods=['POST']) # rota para realizar o cadastro de clientes
 def cadastrar():
@@ -55,10 +55,10 @@ def cadastrar():
     cliente = Cliente(nome=nome, telefone=telefone, email=email, data_nascimento=data_nascimento) # instanciando o objeto Cliente
     db.session.add(cliente) # adicionando ao banco
     db.session.commit() # publicando ao banco
-    return redirect('/')
+    return redirect('/clientes')
 
-@app.route('/', methods=['GET']) # configuração da rota principal, método GET adicionado para a função de busca
-def index():
+@app.route('/clientes', methods=['GET'])
+def clientes():
     busca = request.args.get('busca', '') # coletar o input da busca
     if busca == '': # se nao foi digitado nada
         clientes = Cliente.query.all() # coleta todos os registros do banco
@@ -71,6 +71,11 @@ def index():
             )
         ).all() # e pega todos os registros encontrados
     return render_template('clientes.html', clientes=clientes) # retorna renderizando a tela clientes.html 
+                                                               # passando a lista de clientes resultante
+
+@app.route('/', methods=['GET']) # configuração da rota principal, método GET adicionado para a função de busca
+def index():
+    return render_template('dashboard.html') # retorna renderizando a tela clientes.html 
                                                                # passando a lista de clientes resultante
 
 if __name__ == '__main__':
