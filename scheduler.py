@@ -16,7 +16,7 @@ def verificar_aniversarios():
                 aniversariantes += f'\n{cliente.nome}'
         print(aniversariantes)
 
-schedule.every().day.at("15:17").do(verificar_aniversarios)
+schedule.every().day.at("08:00").do(verificar_aniversarios)
 while True:
     schedule.run_pending()
     time.sleep(60)
