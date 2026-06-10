@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect # classe de iniciali
 from database import db # import da conexão do banco
 from sqlalchemy import or_ # para usar o filter com o método 'ou'
 import os # módulo para manipular o file system
-from models import Cliente # objeto a ser criado no banco
+from models import Cliente, EnvioMensagem # objeto a ser criado no banco
 import datetime
 
 app = Flask(__name__)
@@ -80,6 +80,7 @@ def index():
     niver_semana = 0
     tot_clientes = Cliente.query.count()
     clientes = Cliente.query.all()
+    total_mensagens = EnvioMensagem.query.count()
 
     for cliente in clientes:
         niver_ano_atual = cliente.data_nascimento.replace(year = hoje.year)
@@ -89,7 +90,7 @@ def index():
             niver_hoje += 1
             
     
-    return render_template('dashboard.html', tot_clientes=tot_clientes, niver_hoje=niver_hoje, niver_semana=niver_semana) # retorna renderizando a tela dashboard.html
+    return render_template('dashboard.html', tot_clientes=tot_clientes, niver_hoje=niver_hoje, niver_semana=niver_semana, total_mensagens=total_mensagens) # retorna renderizando a tela dashboard.html
 
 if __name__ == '__main__':
     app.run(debug=True) # inicia o servidor local
