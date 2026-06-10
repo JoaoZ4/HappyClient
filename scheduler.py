@@ -3,10 +3,13 @@ from models import Cliente, EnvioMensagem
 from app import app
 from email.mime.text import MIMEText
 from database import db
+from dotenv import load_dotenv
 import schedule, time, datetime, smtplib, os
 
+load_dotenv()
+
 def enviar_email(destinatario, nome):
-    remetente = 'joaozangaro@gmail.com'
+    remetente = os.environ.get('EMAIL_REMETENTE')
     senha = os.environ.get('EMAIL_SENHA')
     mensagem = MIMEText(f'Feliz aniversário {nome}')
     mensagem['Subject'] = 'Feliz Aniversário!'
