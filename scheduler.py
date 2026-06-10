@@ -1,20 +1,34 @@
 from sqlalchemy import extract
-from models import Cliente
+from models import Cliente, EnvioMensagem
 from app import app
-import schedule, time, datetime
+from email.mime.text import MIMEText
+from database import db
+import schedule, time, datetime, smtplib, os
+
+def enviar_email(destinatario, nome):
+    remetente = 'joaozangaro@gmail.com'
+    senha = os.environ.get('EMAIL_SENHA')
+    mensagem = MIMEText(f'Feliz aniversário {nome}')
+    mensagem['Subject'] = 'Feliz Aniversário!'
+    mensagem['From'] = remetente
+    mensagem['To'] = destinatario
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(remetente, senha)
+        smtp.sendmail(remetente, destinatario, mensagem.as_string())
 
 def verificar_aniversarios():
     with app.app_context():
         clientes = Cliente.query.all()
-
-        print("Verificando aniversários")
-        aniversariantes = 'Os aniversariantes sao:'
         hoje = datetime.date.today()
 
         for cliente in clientes:
             if cliente.data_nascimento.day == hoje.day and cliente.data_nascimento.month == hoje.month:
-                aniversariantes += f'\n{cliente.nome}'
-        print(aniversariantes)
+                enviar_email(cliente.email, cliente.nome)
+                envio = EnvioMensagem(cliente_id=cliente.id)
+                db.session.add(envio)
+                db.session.commit()
+                print('Email enviado para: {}'.format(cliente.email))
 
 schedule.every().day.at("08:00").do(verificar_aniversarios)
 while True:
