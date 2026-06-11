@@ -88,8 +88,7 @@ def index():
             niver_semana += 1
         if cliente.data_nascimento.month == hoje.month and cliente.data_nascimento.day == hoje.day:
             niver_hoje += 1
-            
-    
+
     return render_template('dashboard.html', tot_clientes=tot_clientes, niver_hoje=niver_hoje, niver_semana=niver_semana, total_mensagens=total_mensagens) # retorna renderizando a tela dashboard.html
 
 if __name__ == '__main__':
