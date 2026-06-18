@@ -16,7 +16,8 @@ def gerar_mensagem(nome):
     resposta = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "user", "content": f"Crie uma mensagem de aniversário amigável e curta para um cliente chamado {nome} de uma empresa."}
+            {"role": "system", "content": "Você é um assistente que gera mensagens de aniversário. Responda APENAS com a mensagem de aniversário, sem introduções, sem explicações e sem comentários adicionais."},
+            {"role": "user", "content": f"Crie uma mensagem de aniversário amigável e curta para um cliente chamado {nome}. O email esta sendo enviado de uma empresa chamada happyclient."}
         ]
     )
     mensagem = resposta.choices[0].message.content
