@@ -4,10 +4,23 @@ from app import app
 from email.mime.text import MIMEText
 from database import db
 from dotenv import load_dotenv
+from openai import OpenAI
 import schedule, time, datetime, smtplib, os
 import requests
 
 load_dotenv()
+
+def gerar_mensagem(nome):
+    client = OpenAI(api_key=os.environ.get('OPENAI_KEY'))
+
+    resposta = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": f"Crie uma mensagem de aniversário amigável e curta para um cliente chamado {nome} de uma empresa."}
+        ]
+    )
+    mensagem = resposta.choices[0].message.content
+    return mensagem
 
 def enviar_mensagem(telefone, nome):
     phoneId = os.environ.get('ID_PHONE_NUMBER')
