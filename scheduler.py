@@ -22,7 +22,7 @@ def gerar_mensagem(nome):
     mensagem = resposta.choices[0].message.content
     return mensagem
 
-def enviar_mensagem(telefone, nome):
+def enviar_mensagem(telefone, msg):
     phoneId = os.environ.get('ID_PHONE_NUMBER')
     token = os.environ.get('TOKEN_META')
     url = f'https://graph.facebook.com/v25.0/{phoneId}/messages'
@@ -45,10 +45,10 @@ def enviar_mensagem(telefone, nome):
     resposta = requests.post(url, headers=headers, json=body)
     print(resposta.json())
 
-def enviar_email(destinatario, nome):
+def enviar_email(destinatario, msg):
     remetente = os.environ.get('EMAIL_REMETENTE')
     senha = os.environ.get('EMAIL_SENHA')
-    mensagem = MIMEText(f'Feliz aniversário {nome}')
+    mensagem = MIMEText(msg)
     mensagem['Subject'] = 'Feliz Aniversário!'
     mensagem['From'] = remetente
     mensagem['To'] = destinatario
@@ -65,8 +65,9 @@ def verificar_aniversarios():
         for cliente in clientes:
             if cliente.data_nascimento.day == hoje.day and cliente.data_nascimento.month == hoje.month:
                 tel_formatado = '55' + cliente.telefone
-                enviar_email(cliente.email, cliente.nome)
-                enviar_mensagem(tel_formatado, cliente.nome)
+                mensagem = gerar_mensagem(cliente.nome)
+                enviar_email(cliente.email, mensagem)
+                enviar_mensagem(tel_formatado, mensagem)
                 envio = EnvioMensagem(cliente_id=cliente.id)
                 db.session.add(envio)
                 db.session.commit()
