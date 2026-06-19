@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect # classe de inicialização do flask
+from flask import Flask, render_template, request, redirect, session # classe de inicialização do flask
 from database import db # import da conexão do banco
 from sqlalchemy import or_ # para usar o filter com o método 'ou'
 import os # módulo para manipular o file system
@@ -18,6 +18,14 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all() # diz para o banco que pode criar as tabelas no contexto desse app
+
+app.secret_key = 'happyclient123'
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        if request.form['usuario'] == 'admin' and request.form['senha'] == app.secret_key:
+            pass
 
 @app.route('/clientes/editar/<int:id>', methods=['GET', 'POST']) # rota para editar registros
 def editar(id):
